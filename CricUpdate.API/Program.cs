@@ -1,5 +1,6 @@
 using CricUpdate.API.Data;
 using CricUpdate.API.Repository;
+using CricUpdate.API.SeedData;
 using CricUpdate.API.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -19,6 +20,8 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("SqlConnection"));
 });
 builder.Services.AddScoped<IAuthRepository, AuthRepository>();
+builder.Services.AddScoped<ICricketerRepository, CricketerRepository>();
+builder.Services.AddScoped<IMatchRepository, MatchRepository>();
 builder.Services.AddSingleton<TokenService>();
 
 //Setyp JWT
@@ -55,5 +58,13 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    var context = services.GetRequiredService<ApplicationDbContext>();
+    context.Database.Migrate();
+    await Seed.SeedAsync(context);
+}
 
 app.Run();
