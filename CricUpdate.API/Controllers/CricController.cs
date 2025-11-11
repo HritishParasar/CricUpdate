@@ -121,6 +121,7 @@ namespace CricUpdate.API.Controllers
         public async Task<IActionResult> DeletePlayer(int id)
         {
             await cricketerRepository.DeleteCricketer(id);
+
             return Ok("Successfully deleted.");
         }
         [HttpPost("addMatch")]
