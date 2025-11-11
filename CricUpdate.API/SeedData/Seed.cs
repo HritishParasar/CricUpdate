@@ -1,5 +1,6 @@
 ﻿using CricUpdate.API.Data;
 using CricUpdate.API.Models;
+using CricUpdate.API.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace CricUpdate.API.SeedData
@@ -8,6 +9,29 @@ namespace CricUpdate.API.SeedData
     {
         public static async Task SeedAsync(ApplicationDbContext context)
         {
+            if(!await context.Users.AnyAsync())
+            {
+                // create default admin user
+                var adminUsername = "admin";
+                var adminEmail = "admin@example.com";
+                var adminPassword = "Admin@123"; // change in prod
+
+                PasswordService.CreatePasswordHash(adminPassword, out var hash, out var salt);
+
+                var admin = new User
+                {
+                    Username = adminUsername,
+                    Email = adminEmail,
+                    PasswordHash = hash,
+                    PasswordSalt = salt,
+                    Role = "Admin",
+                    CreatedAt = DateTime.UtcNow
+                };
+
+                context.Users.Add(admin);
+                await context.SaveChangesAsync();
+            }
+
             if (await context.Cricketers.AnyAsync() || await context.Matches.AnyAsync())
                 return; // already seeded
 

@@ -20,7 +20,8 @@ namespace CricUpdate.API.Services
             {
                 new Claim(JwtRegisteredClaimNames.Sub,user.Id.ToString()),
                 new Claim(JwtRegisteredClaimNames.Name,user.Username),
-                new Claim(JwtRegisteredClaimNames.Email,user.Email ?? string.Empty)
+                new Claim(JwtRegisteredClaimNames.Email,user.Email ?? string.Empty),
+                new Claim(ClaimTypes.Role,user.Role ?? "User")
             };
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Key"]!));
             var creds = new SigningCredentials(key,SecurityAlgorithms.HmacSha256);

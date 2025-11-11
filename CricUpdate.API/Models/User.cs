@@ -8,5 +8,7 @@
         public byte[] PasswordHash { get; set; } = null!;
         public byte[] PasswordSalt { get; set; } = null!;
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+        public string Role { get; set; } = "User";
     }
 }
